@@ -51,4 +51,9 @@ class Budget extends Model
     {
         return $this->belongsTo(Priority::class);
     }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BudgetResource\Pages;
 use App\Filament\Resources\BudgetResource\RelationManagers;
 use App\Models\Budget;
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
@@ -37,6 +38,23 @@ class BudgetResource extends Resource
     {
         return $form
             ->schema([
+                Section::make('Produto Relacionado')
+                    ->schema([
+                        Select::make('product_id')
+                            ->label('Produto')
+                            ->relationship('product', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->options(function () {
+                                return Product::all()->mapWithKeys(function ($product) {
+                                    return [$product->id => "{$product->name} - R$ " . number_format($product->ideal_price, 2, ',', '.')];
+                                })->toArray();
+                            })
+                            ->disabled(fn ($record) => $record !== null), // Se estiver editando, desativa
+                    ])
+                    ->columns(1), // Ocupa toda a largura
+
                 Section::make('Informações Gerais')
                     ->schema([
                         TextInput::make('name')
@@ -80,6 +98,7 @@ class BudgetResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->required(),
+
                                 Select::make('priority_id')
                                     ->label('Prioridade')
                                     ->relationship('priority', 'name')
@@ -87,6 +106,7 @@ class BudgetResource extends Resource
                                     ->searchable()
                                     ->required(),
                             ]),
+
                         Textarea::make('description')
                             ->label('Descrição')
                             ->nullable()
@@ -132,6 +152,11 @@ class BudgetResource extends Resource
                     ->label('Nome do Orçamento')
                     ->searchable()
                     ->sortable(),
+
+                TextColumn::make('product.name')
+                    ->label('Produto')
+                    ->sortable()
+                    ->searchable(),
 
                 TextColumn::make('supplier.name')
                     ->label('Fornecedor')
