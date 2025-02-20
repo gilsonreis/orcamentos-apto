@@ -47,7 +47,7 @@ class SupplierResource extends Resource
 
                         TextInput::make('phone')
                             ->label('Telefone')
-                            ->tel()
+                            ->mask('(99) 9999[9]-9999')
                             ->nullable(),
 
                         TextInput::make('address')
@@ -65,7 +65,7 @@ class SupplierResource extends Resource
 
                         TextInput::make('seller_phone')
                             ->label('Telefone do Vendedor')
-                            ->tel()
+                            ->mask('(99) 9999[9]-9999')
                             ->nullable(),
                     ])->columns(),
             ]);
